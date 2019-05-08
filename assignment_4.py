@@ -6,12 +6,12 @@ from matplotlib.ticker import MaxNLocator
 from collections import namedtuple
 
 def main():
-    seq = ""
-    #with open(myfile,'r') as current_file:
-        #seq = current_file.read()  
+    myfile = sys.argv[1]
+    with open(myfile,'r') as current_file:
+        seq = current_file.read()  
         
     seq = seq.upper()
-    k = 1
+    k = int(sys.argv[2])
     dataframe = (kmer_count(k, seq))
     print (dataframe)
     complexity = linguistic_complexity(dataframe)
@@ -20,7 +20,22 @@ def main():
 
 
 def kmer_count(k, example_seq):
-    
+    """
+        Generates a dataframe of kmer counts in an input sequence 
+        
+        This function measures the unique kmers of each size in the specified range of the
+        input example sequence and puts them into a dataframe with the possible kmers for each
+        k value
+        
+        Parameter:
+        k (int): starting value of k to produce kmers of size k through length of the string
+        example_seq (string): a string of nucleotides in sequence
+        
+        Return:
+        dataframe: containing all of the observed and possible kmers
+        or
+        string: only if it fails the parameter specifications
+    """    
     kmer = []
     observed = []
     possible = []
@@ -65,6 +80,19 @@ def kmer_count(k, example_seq):
 
 
 def plot_data(dataframe):
+    """
+        Generates a bar graph of kmer counts for a sequence by k value
+        
+        This function will produce a bar graph containing the possible kmers and the
+        observed kmers plotted next to each other for each value of k in ascending 
+        order
+        
+        Parameter:
+        dataframe: dataframe containing the observed and possible kmer counts
+        
+        Return:
+        graph: outputs a bar graph of the observed and possible kmer counts displayed side by side 
+    """        
     if len(dataframe.index)-1 >=1:
         fig, ax = plt.subplots()
     
@@ -97,6 +125,20 @@ def plot_data(dataframe):
         plt.show()    
 
 def linguistic_complexity(dataframe):
+    """
+        Will produce a float of linguistic complexity 
+        
+        The linguistic complexity will be calculated by dividing the total number
+        of observed unique kmers over the total number of possible unique kmers
+        
+        Parameter:
+        dataframe: dataframe containing the observed and possible kmer counts
+        
+        Return:
+        float: returns the ratio of total observed over possible 
+        or 
+        string: if failed parameters
+    """            
     if dataframe.iloc[-1,2] > 0:
         return (dataframe.iloc[-1,1]/dataframe.iloc[-1,2])
     else: 
