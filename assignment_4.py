@@ -1,5 +1,22 @@
 import pandas as pd
 import sys
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
+from collections import namedtuple
+
+def main():
+    seq = ""
+    #with open(myfile,'r') as current_file:
+        #seq = current_file.read()  
+        
+    seq = seq.upper()
+    k = 1
+    dataframe = (kmer_count(k, seq))
+    print (dataframe)
+    complexity = linguistic_complexity(dataframe)
+    print ("The linguistic complexity of the data is", complexity)
+    plot_data(dataframe)    
 
 
 def kmer_count(k, example_seq):
@@ -8,9 +25,8 @@ def kmer_count(k, example_seq):
     observed = []
     possible = []
     
-    #make "if k >= 1" function
     if k >=1:
-        for i in example_seq:
+        while k <= len(example_seq):
             if k == 1 and len(example_seq) >= 4:
                 possible.append(4)
             elif k == 1 and len(example_seq) < 4:
@@ -45,22 +61,46 @@ def kmer_count(k, example_seq):
         K_data = pd.DataFrame(k_frame)
         return (K_data)
     else: 
-        print ("Please use a value that is 1 or greater!") 
+        return ("Please use a k of length between 1 and the length of your sequence! Also use a string longer than 0 characters.") 
 
 
 def plot_data(dataframe):
-    dsa
+    if len(dataframe.index)-1 >=1:
+        fig, ax = plt.subplots()
+    
+        index = np.arange((len(dataframe.index)-2))
+        bar_width = 0.35
+        
+        opacity = 0.4
+        error_config = {'ecolor': '0.3'}
+        
+        observed = np.array(dataframe.iloc[0:(len(dataframe.index)-2), 1].tolist())
+        possible = np.array(dataframe.iloc[0:(len(dataframe.index)-2), 2].tolist())
+        k = np.array(dataframe.iloc[0:(len(dataframe.index)-2), 0].tolist())
+        
+        rects1 = ax.bar(index, observed, bar_width,
+                        alpha=opacity, color='b',
+                        label='Observed')   
+        
+        rects2 = ax.bar(index + bar_width, possible, bar_width,
+                        alpha=opacity, color='r',
+                        label='Possible')
+        
+        ax.set_xlabel('Type')
+        ax.set_ylabel('Count')
+        ax.set_title('Observed kmers Compared to Possible kmers at each Value k')
+        ax.set_xticks(index + bar_width / 2)
+        ax.set_xticklabels(k)
+        ax.legend()
+        
+        fig.tight_layout()
+        plt.show()    
 
 def linguistic_complexity(dataframe):
     if dataframe.iloc[-1,2] > 0:
         return (dataframe.iloc[-1,1]/dataframe.iloc[-1,2])
+    else: 
+        return ("Denominator is equivalent to zero meaning string is empty. Please try again.")
 
-    
-seq = "ATTTGGATT"
-k = 1
-dataframe = (kmer_count(k, seq))
-complexity = linguistic_complexity(dataframe)
-
-print (complexity)
-    
-        
+if __name__ == "__main__":
+    main()
